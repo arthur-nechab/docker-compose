@@ -25,6 +25,7 @@ services:
       - "traefik.http.routers.portainer-secure.service=portainer"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       - "traefik.docker.network=proxy"
+    env_file: .env
 
 networks:
   proxy:
