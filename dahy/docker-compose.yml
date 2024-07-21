@@ -1,0 +1,37 @@
+---
+version: "3.9"
+services:
+  dashy:
+    image: lissy93/dashy:latest
+    container_name: dashy
+    restart: unless-stopped
+    networks:
+      - proxy
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - /opt/docker/dashy/conf.yml:/app/user-data/conf.yml
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashy.entrypoints=http"
+      - "traefik.http.routers.dashy.rule=Host(`home.${LOCAL_DOMAIN}`)"
+      - "traefik.http.middlewares.dashy-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.dashy.middlewares=dashy-https-redirect"
+      - "traefik.http.routers.dashy-secure.entrypoints=https"
+      - "traefik.http.routers.dashy-secure.rule=Host(`home.${LOCAL_DOMAIN}`)"
+      - "traefik.http.routers.dashy-secure.tls=true"
+      - "traefik.http.routers.dashy-secure.service=dashy"
+      - "traefik.http.services.dashy.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+    env_file:
+      - stack.env
+
+networks:
+  proxy:
+    external: true
