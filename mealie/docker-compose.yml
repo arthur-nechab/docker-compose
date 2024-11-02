@@ -1,0 +1,26 @@
+---
+version: "3.9"
+services:
+  mealie:
+    image: hkotel/mealie:latest
+    container_name: mealie
+    restart: unless-stopped
+    networks:
+      - mealie
+    ports:
+      - 9000:9000
+    environment:
+      - ALLOW_SIGNUP=${ALLOW_SIGNUP}
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - MAX_WORKERS=${MAX_WORKERS}
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY}
+      - BASE_URL=${BASE_URL}
+    volumes:
+      - ./data:/app/data
+    env_file: .env
+
+networks:
+  mealie:
+    external: true
