@@ -1,0 +1,23 @@
+---
+version: "3.9"
+services:
+  foundry:
+    image: felddy/foundryvtt:12.331
+    container_name: foundry
+    restart: unless-stopped
+    networks:
+      - foundry
+    ports:
+      - 30000:30000
+    environment:
+      - FOUNDRY_USERNAME=${FOUNDRY_USERNAME}
+      - FOUNDRY_PASSWORD=${FOUNDRY_PASSWORD}
+      - FOUNDRY_ADMIN_KEY=${FOUNDRY_ADMIN_KEY}
+      - FOUNDRY_LICENSE_KEY=${FOUNDRY_LICENSE_KEY}
+    volumes:
+      - ./:/data
+    env_file: .env
+
+networks:
+  foundry:
+    external: true
