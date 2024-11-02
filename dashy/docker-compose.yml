@@ -8,9 +8,9 @@ services:
     networks:
       - proxy
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
     volumes:
-      - ./conf.yml:/app/user-data/conf.yml
+      - ./config/conf.yml:/app/user-data/conf.yml
     healthcheck:
       test: ['CMD', 'node', '/app/services/healthcheck']
       interval: 1m30s
@@ -20,17 +20,13 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dashy.entrypoints=http"
-      - "traefik.http.routers.dashy.rule=Host(`home.${LOCAL_DOMAIN}`)"
+      - "traefik.http.routers.dashy.rule=Host(`home.${LOCAL_DOMAIN_NAME}`)"
       - "traefik.http.middlewares.dashy-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.dashy.middlewares=dashy-https-redirect"
       - "traefik.http.routers.dashy-secure.entrypoints=https"
-      - "traefik.http.routers.dashy-secure.rule=Host(`home.${LOCAL_DOMAIN}`)"
+      - "traefik.http.routers.dashy-secure.rule=Host(`home.${LOCAL_DOMAIN_NAME}`)"
       - "traefik.http.routers.dashy-secure.tls=true"
       - "traefik.http.routers.dashy-secure.service=dashy"
       - "traefik.http.services.dashy.loadbalancer.server.port=8080"
       - "traefik.docker.network=proxy"
     env_file: .env
-
-networks:
-  proxy:
-    external: true
